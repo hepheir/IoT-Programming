@@ -59,11 +59,26 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define PERIOD 5
+
+#define STATE_0 0
+#define STATE_1 1
+#define STATE_2 2
+
+int state = STATE_0;
+int is_active = 0;
+
+int seconds_elapsed = 0;
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM2)
     {
-        HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+        seconds_elapsed = (seconds_elapsed + 1) % PERIOD;
+        if (is_active && seconds_elapsed == 0)
+        {
+            state = (state + 1) % 3;
+        }
     }
 }
 /* USER CODE END 0 */
@@ -110,7 +125,19 @@ int main(void)
     while (1)
     {
         /* USER CODE END WHILE */
-
+        switch (state)
+        {
+        case STATE_0:
+            HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
+            break;
+        case STATE_1:
+            HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
+            break;
+        case STATE_2:
+            HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+            HAL_Delay(500);
+            break;
+        }
         /* USER CODE BEGIN 3 */
     }
     /* USER CODE END 3 */
@@ -285,6 +312,14 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == B1_Pin)
+    {
+        is_active = !is_active;
+    }
+}
 
 /* USER CODE END 4 */
 
