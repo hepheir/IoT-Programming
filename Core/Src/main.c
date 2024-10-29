@@ -46,6 +46,7 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+int didVibrate = 0;
 
 /* USER CODE END PV */
 
@@ -59,6 +60,12 @@ int __io_putchar(int ch)
 {
   HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
   return ch;
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  printf("Vib : %d \n\r", didVibrate);
+  didVibrate = 0;
 }
 
 /* USER CODE END PFP */
@@ -101,6 +108,8 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_TIM_Base_Start_IT(&htim2);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -109,8 +118,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-    printf("Vib : %d \n\r", HAL_GPIO_ReadPin(vibrtion_transducer_GPIO_Port, vibrtion_transducer_Pin));
-    HAL_Delay(1000);
+    didVibrate |= HAL_GPIO_ReadPin(vibrtion_transducer_GPIO_Port, vibrtion_transducer_Pin);
 
     /* USER CODE BEGIN 3 */
   }
