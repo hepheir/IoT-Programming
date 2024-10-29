@@ -233,7 +233,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : vibrtion_transducer_Pin */
   GPIO_InitStruct.Pin = vibrtion_transducer_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(vibrtion_transducer_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
